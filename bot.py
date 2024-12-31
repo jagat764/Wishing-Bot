@@ -44,17 +44,23 @@ Warm regards,
         except Exception as e:
             print(f"Failed to send message to chat ID: {chat_id}. Error: {e}")
 
-def job():
+def schedule_task():
     """
-    Function to schedule the task.
+    Function to schedule the task to send a New Year wish.
     """
-    asyncio.run(send_new_year_wish())
+    # This will create an asyncio task without blocking
+    asyncio.create_task(send_new_year_wish())
 
-# Schedule the message to be sent at 12:00 AM today
-schedule.every().day.at("00:00").do(job)
+async def main():
+    # Schedule the message to be sent at 12:00 AM today
+    schedule.every().day.at("00:00").do(schedule_task)
+    
+    print("Bot is running. Waiting to send the New Year wish at 12:00 AM...")
+    
+    while True:
+        schedule.run_pending()
+        await asyncio.sleep(1)
 
-# Keep the script running and check for scheduled tasks
-print("Bot is running. Waiting to send the New Year wish at 12:00 AM...")
-while True:
-    schedule.run_pending()
-    time.sleep(1)
+# Run the main async function
+if __name__ == '__main__':
+    asyncio.run(main())
